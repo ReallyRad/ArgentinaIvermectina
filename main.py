@@ -1,7 +1,17 @@
 import csv
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
 
+#pd.read_csv("covid19casos short.csv")["fecha_fallecimiento"].value_counts().plot()
 
-with open('covid19casos short.csv') as csvfile:
-     csv_reader = csv.reader(csvfile, delimiter=',')
-     for row in csv_reader:
-         print(row)
+df = pd.read_csv("fallecimientos.csv")["fecha_fallecimiento"]
+df = pd.to_datetime(df)
+# df.sort_values(by='fecha_fallecimiento')
+df.value_counts().plot()
+plt.show()
+
+# to remove all non deaths
+# df = pd.read_csv("Covid19Casos.csv")
+# df = df[df["fecha_fallecimiento"].notna()]
+# df.to_csv("fallecimientos.csv")
