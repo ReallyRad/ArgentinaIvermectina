@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 
 fig, ax1 = plt.subplots()
 
-region = "SANTA CRUZ"
+region = "SALTA"
 
 cfr = pd.read_csv("CFR.csv", encoding='latin-1')
 cfr["Date"] = pd.to_datetime(cfr["Date"])
@@ -20,6 +20,20 @@ ivm.columns = pd.to_datetime(ivm.columns)
 
 fig.tight_layout()
 ax2.plot(ivm.iloc[index], color = "yellow", label="ivm use")
+
+casos = pd.read_csv("casos confirmados Salta.csv")["fecha_apertura"]
+casos = pd.to_datetime(casos)
+casos.sort_values()
+casos.value_counts().plot()
+
+fallecimientos = pd.read_csv("casos confirmados Salta.csv")["fecha_fallecimiento"]
+fallecimientos = pd.to_datetime(fallecimientos)
+fallecimientos.sort_values()
+fallecimientos.value_counts().plot()
+
+moving_cfr = fallecimientos.value_counts()/casos.value_counts()*1000
+moving_cfr.plot()
+# ax3 = ax1.twinx()<
 
 ax1.legend(loc = 1)
 ax2.legend(loc = 2)
