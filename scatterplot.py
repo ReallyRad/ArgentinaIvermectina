@@ -3,7 +3,8 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
 
-cases = pd.read_csv("casos confirmados.csv", encoding='latin-1')
+cases = pd.read_csv("casos confirmados.csv", encoding='utf-8')
+# cases = pd.read_csv("covid19casos short.csv", encoding='latin-1')
 
 ivm = pd.read_csv("IVMx1000.csv")
 
@@ -19,10 +20,12 @@ for provincia in provinces :
 
 cfrs = pd.Series(cfrs)
 ivm["sum"] = ivm.sum(axis = 1)
-x =3
 plt.scatter(ivm["sum"], cfrs)
-# for i in range(provinces):
-#   plt.annotate(provinces[i], ivm["sum"][i], cfrs[i])
+
+ivm.sort_values(["STATE", "sum"])
+cfrs = cfrs.sort_index()
+for i,province in enumerate(provinces):
+  plt.annotate(province, (ivm["sum"][i].item(), cfrs[i].item()))
 
 lr = LinearRegression()
 lr.fit(ivm["sum"].values.reshape(-1, 1), cfrs.values.reshape(-1, 1))
