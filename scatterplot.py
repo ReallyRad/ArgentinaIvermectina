@@ -2,6 +2,28 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
+import scipy.stats
+
+
+# Polynomial Regression
+def polyfit(x, y, degree):
+    results = {}
+
+    coeffs = np.polyfit(x, y, degree)
+
+     # Polynomial Coefficients
+    results['polynomial'] = coeffs.tolist()
+
+    # r-squared
+    p = np.poly1d(coeffs)
+    # fit values, and mean
+    yhat = p(x)                         # or [p(z) for z in x]
+    ybar = np.sum(y)/len(y)          # or sum(y)/len(y)
+    ssreg = np.sum((yhat-ybar)**2)   # or sum([ (yihat - ybar)**2 for yihat in yhat])
+    sstot = np.sum((y - ybar)**2)    # or sum([ (yi - ybar)**2 for yi in y])
+    results['determination'] = ssreg / sstot
+
+    return results
 
 cases = pd.read_csv("casos confirmados.csv", encoding='utf-8')
 # cases = pd.read_csv("covid19casos short.csv", encoding='latin-1')
@@ -33,7 +55,17 @@ for i,province in enumerate(provinces):
 lr = LinearRegression()
 lr.fit(ivm["sum"].values.reshape(-1, 1), cfrs.values.reshape(-1, 1))
 cfrs_pred = lr.predict(ivm["sum"].values.reshape(-1, 1))
+
+r, p = scipy.stats.pearsonr(ivm["sum"], cfrs)
+fitting = polyfit(ivm["sum"], cfrs, 1)
+
 plt.plot(ivm["sum"].values.reshape(-1, 1), cfrs_pred, color="red")
-plt.title("CFR x Achats IVM en Argentine par région, a partir de Juillet 2020")
+plt.title("CFR x Achats IVM en Argentine par région, a partir de Juillet 2020 "
+          + 'Pearson R = '+ str(r) + ', p = ' + str(p) )
+
+
+
 plt.show()
+
+x=3
 
