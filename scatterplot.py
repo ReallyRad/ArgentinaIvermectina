@@ -28,7 +28,7 @@ def polyfit(x, y, degree):
 cases = pd.read_csv("casos confirmados.csv", encoding='utf-8')
 # cases = pd.read_csv("covid19casos short.csv", encoding='latin-1')
 
-ivm = pd.read_csv("IVMx1000.csv")
+ivm = pd.read_csv("data/IVMx1000.csv")
 
 provinces = cases["carga_provincia_nombre"].unique()
 provinces.sort()
