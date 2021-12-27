@@ -4,14 +4,13 @@ import numpy as np
 from sklearn.linear_model import LinearRegression
 import scipy.stats
 
-
 # Polynomial Regression
 def polyfit(x, y, degree):
     results = {}
 
     coeffs = np.polyfit(x, y, degree)
 
-     # Polynomial Coefficients
+    # Polynomial Coefficients
     results['polynomial'] = coeffs.tolist()
 
     # r-squared
@@ -34,18 +33,18 @@ provinces = cases["carga_provincia_nombre"].unique()
 provinces.sort()
 
 cfrs = {}
-for provincia in provinces :
-  old_folks =  cases.loc[cases["edad"] > 0 ]
+for provincia in provinces:
+  old_folks = cases.loc[cases["edad"] > 0 ]
   old_folks_after_january = old_folks.loc[pd.to_datetime(old_folks["fecha_apertura"]) > pd.to_datetime("2020-07-01")]
   # value_counts = old_folks_after_january.loc[old_folks_after_january["carga_provincia_nombre"] == provincia]["fallecido"].value_counts()
   value_counts = old_folks_after_january.loc[old_folks_after_january["carga_provincia_nombre"] == provincia]["fallecido"].value_counts()
   if "SI" in value_counts.index:
     cfrs[provincia] = value_counts["SI"]/value_counts["NO"]
 
-cfrs = pd.Series(cfrs)
-ivm["sum"] = ivm.sum(axis = 1)
-ivm.sort_values(["STATE", "sum"])
-cfrs = cfrs.sort_index()
+cfrs = pd.Series(cfrs) #create cfrs series
+ivm["sum"] = ivm.sum(axis = 1) #sum ivm quantity over time
+ivm.sort_values(["STATE", "sum"]) #sort by region
+cfrs = cfrs.sort_index() #sort cfrs to match order
 scatter = plt.scatter(ivm["sum"], cfrs)
 plt.xlabel("IVM x 1000 habitants")
 plt.ylabel("CFR")
@@ -62,7 +61,6 @@ fitting = polyfit(ivm["sum"], cfrs, 1)
 plt.plot(ivm["sum"].values.reshape(-1, 1), cfrs_pred, color="red")
 plt.title("CFR x Achats IVM en Argentine par région, a partir de Juillet 2020 "
           + 'Pearson R = '+ str(r) + ', p = ' + str(p) )
-
 
 
 plt.show()
