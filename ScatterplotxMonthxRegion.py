@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 from sklearn.linear_model import LinearRegression
 import scipy.stats
+import seaborn as sns
 
 # Polynomial Regression
 def polyfit(x, y, degree):
@@ -38,20 +39,14 @@ for index, ivm_row in ivm_per_1000_per_region_per_month.iterrows():
             merged[merged_row] = {"STATE": ivm_row["STATE"], "MONTH": row_index, "IVM": ivm_row_value, "CFR": cfr_value}
             merged_row += 1
 
-merged_df = pd.DataFrame.from_dict(merged)
+merged_df = pd.DataFrame.from_dict(merged, orient="index")
 
-ivm_array = []
-cfr_array = []
+sns.scatterplot(data=merged_df, x="IVM", y="CFR", hue="MONTH")
 
-for month in ivm_per_1000_per_region_per_month.columns:
-    if month != "STATE" and month in cfr_per_region_per_month.columns:
-        ivm_array.extend(ivm_per_1000_per_region_per_month[month].values)
-        cfr_array.extend(cfr_per_region_per_month[month].values)
-        scatter = plt.scatter(ivm_per_1000_per_region_per_month[month].values, cfr_per_region_per_month[month].values)
 
 #scatter = plt.scatter(ivm_array, cfr_array)
 
-ivm_cfr_df = pd.DataFrame({'ivm':np.array(ivm_array), 'cfr':np.array(cfr_array)})
+ivm_cfr_df = pd.DataFrame({'ivm':np.array(merged_df["IVM"]), 'cfr':np.array(merged_df["CFR"])})
 ivm_cfr_df = ivm_cfr_df[ivm_cfr_df["cfr"]!=0]
 
 r, p = scipy.stats.pearsonr(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["cfr"]))
