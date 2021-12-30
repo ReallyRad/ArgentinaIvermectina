@@ -35,13 +35,13 @@ merged_row = 0
 for index, ivm_row in ivm_per_1000_per_region_per_month.iterrows():
     for row_index, ivm_row_value in ivm_row.items():
         if row_index != "STATE":
-            cfr_value = cfr_per_region_per_month.loc[cfr_per_region_per_month["STATE"] == "BUENOS AIRES"][row_index].values[0]
+            cfr_value = cfr_per_region_per_month.loc[cfr_per_region_per_month["STATE"] == ivm_row["STATE"]][row_index].values[0]
             merged[merged_row] = {"STATE": ivm_row["STATE"], "MONTH": row_index, "IVM": ivm_row_value, "CFR": cfr_value}
             merged_row += 1
 
 merged_df = pd.DataFrame.from_dict(merged, orient="index")
 
-sns.scatterplot(data=merged_df, x="IVM", y="CFR", hue="MONTH")
+sns.scatterplot(data=merged_df, x="IVM", y="CFR", hue="STATE")
 
 
 #scatter = plt.scatter(ivm_array, cfr_array)
