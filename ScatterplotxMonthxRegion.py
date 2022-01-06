@@ -4,26 +4,7 @@ from sklearn.linear_model import LinearRegression
 import scipy.stats
 import plotly_express as px
 # Polynomial Regression
-import utils
 
-def polyfit(x, y, degree):
-  results = {}
-
-  coeffs = np.polyfit(x, y, degree)
-
-  # Polynomial Coefficients
-  results['polynomial'] = coeffs.tolist()
-
-  # r-squared
-  p = np.poly1d(coeffs)
-  # fit values, and mean
-  yhat = p(x)  # or [p(z) for z in x]
-  ybar = np.sum(y) / len(y)  # or sum(y)/len(y)
-  ssreg = np.sum((yhat - ybar) ** 2)  # or sum([ (yihat - ybar)**2 for yihat in yhat])
-  sstot = np.sum((y - ybar) ** 2)  # or sum([ (yi - ybar)**2 for yi in y])
-  results['determination'] = ssreg / sstot
-
-  return results
 
 ivm_per_1000_per_region_per_month = pd.read_csv("data/IVMx1000.csv")
 cfr_per_region_per_month = pd.read_csv("data/cfr_per_month_per_region.csv")
@@ -59,7 +40,6 @@ ivm_cfr_df = ivm_cfr_df[ivm_cfr_df["cfr"]!=0]
 
 r, p = scipy.stats.pearsonr(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["cfr"]))
 
-fit = polyfit(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["cfr"]), 1)
 
 fig = px.scatter(merged_df, x="IVM",
                  y="CFR",
