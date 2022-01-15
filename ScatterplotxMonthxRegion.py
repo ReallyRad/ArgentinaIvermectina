@@ -11,6 +11,7 @@ cases_region_month_1000 = pd.read_csv("data/cases_per_month_per_region_per_1000_
 cases_region_month = pd.read_csv("data/cases_per_month_per_region.csv")
 total_cases_region_month = pd.read_csv("data/cases_per_month_per_region_per_1000_inhabitants.csv")
 population_region = pd.read_csv("data/population_region.csv")
+icu_rate_region = pd.read_csv("data/icu_rate_per_month_per_region.csv")
 
 merged = dict()
 merged_row = 0
@@ -19,12 +20,14 @@ for index, ivm_row in ivm_region_month_1000.iterrows():
     for row_index, ivm_row_value in ivm_row.items():
         if row_index != "STATE":
             cfr_value = cfr_region_month.loc[cfr_region_month["STATE"] == ivm_row["STATE"]][row_index].values[0]
+            icu_rate_value = icu_rate_region.loc[icu_rate_region["STATE"] == ivm_row["STATE"]][row_index].values[0]
             cases_per_1000_value = cases_region_month_1000.loc[cases_region_month_1000["STATE"] == ivm_row["STATE"]][row_index].values[0]
             cases_value = cases_region_month.loc[cases_region_month["STATE"] == ivm_row["STATE"]][row_index].values[0]
             merged[merged_row] = {"STATE": ivm_row["STATE"],
                                   "MONTH": row_index,
                                   "IVM": ivm_row_value,
-                                  "CFR": cfr_value,
+                                  "CFR": icu_rate_value,
+                                  "ICU": cfr_value,
                                   "CASES_PER_1000": cases_per_1000_value,
                                   "CASES": cases_value,
                                   "POPULATION": population_region[population_region["STATE"] == ivm_row["STATE"]]["Population"].values[0]
