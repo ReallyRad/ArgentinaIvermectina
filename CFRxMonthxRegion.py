@@ -35,11 +35,24 @@ for region in dataframe["carga_provincia_nombre"].unique(): #for each region
                               (dataframe["clasificacion_resumen"] == "Confirmado")]
 
     confirmed_cases = filtered_frame.shape[0]
-    #deaths = filtered_frame[filtered_frame["fecha_fallecimiento"].notna()].shape[0]
-    population = population_df[population_df.STATE == simplify(region).upper()]["Population"].values[0]
-    #if(confirmed_cases > 0): CFR = deaths/confirmed_cases
-    dates_dict[date] = confirmed_cases/population * 1000
-    print("cases per 1000 between " + str(date) + " and " + str(date + pd.DateOffset(months=1)) + " in " + region + " is " + str(confirmed_cases/population * 1000))
+    deaths = filtered_frame[filtered_frame["fecha_fallecimiento"].notna()].shape[0]
+    icu = filtered_frame[filtered_frame["cuidado_intensivo"] == "SI"].shape[0]
+    ventilators = filtered_frame[filtered_frame["asistencia_respiratoria_mecanica"] == "SI"].shape[0]
+    #population = population_df[population_df.STATE == simplify(region).upper()]["Population"].values[0]
+    if(confirmed_cases > 0):
+      CFR = deaths/confirmed_cases
+      icu_rate = icu / confirmed_cases
+      ventilator_rate = ventilators / confirmed_cases
+    dates_dict[date] = icu_rate
+    print("region : " + str(region))
+    print("period : from " + str(date) + " to " + str(date + pd.DateOffset(months=1)))
+    print("Deaths : " + str(deaths))
+    print("CFR : " + str(CFR))
+    print("Ventilators " + str(ventilators))
+    print("Confirmed cases " + str(confirmed_cases))
+    print("ICU " + str(icu))
+    print("ICU rate " + str(icu_rate))
+    print("")
 
   cfrs_region_month[region] = dates_dict
   cfrs_region_month_df = pd.DataFrame.from_dict(cfrs_region_month, orient="index")
@@ -52,7 +65,5 @@ final_df.rename(columns={'index': 'STATE'}, inplace=True)
 final_df.STATE = final_df.STATE.replace("CABA", "CAPITAL FEDERAL")
 final_df.STATE = [simplify(x).upper() for x in final_df.STATE]
 #cfr_per_region_per_month.columns = [pd.to_datetime(x, errors='ignore').strftime("%M/%Y") for x in cfr_per_region_per_month.columns]
-final_df.sort_values(by = "STATE")
 
-
-final_df.to_csv("cases_per_month_per_region_per_1000_inhabitants.csv")
+final_df.to_csv("data/deaths.csv")

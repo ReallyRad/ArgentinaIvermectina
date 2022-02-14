@@ -49,7 +49,7 @@ merged_df.to_csv("data/merged_dataset.csv")
 
 #merged_df = merged_df[(merged_df['MONTH'] < '2021-01-01')]
 #merged_df = merged_df[(merged_df['MONTH'] > '2021-04-01')]
-merged_df = merged_df[(merged_df['CASES'] > 1000)]
+#merged_df = merged_df[(merged_df['CASES'] > 500)]
 #merged_df = merged_df[merged_df['STATE'].isin(["BUENOS AIRES", "CAPITAL FEDERAL"])]
 
 ivm_cfr_df = pd.DataFrame({'ivm':np.array(merged_df["IVM/CASE"]), 'cfr':np.array(merged_df["CFR"])})
@@ -57,16 +57,16 @@ ivm_cfr_df = ivm_cfr_df[ivm_cfr_df["cfr"]!=0]
 
 r, p = scipy.stats.pearsonr(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["cfr"]))
 
-fig = px.scatter(merged_df, x="IVM/CASE",
+fig = px.scatter(merged_df, x="IVM",
                  y="CFR",
                  title="CFR x IVM Purchases, " + 'Pearson R = '+ str(r) + ', p = ' + str(p),
                  color="STATE",
                  hover_data=["MONTH", "STATE"],
                  #text="STATE",
-                 size="CASES",
+                 size="CASES_PER_1000",
                  trendline="ols",
                  trendline_scope="overall",
-                 trendline_options=dict(log_x=True, log_y=True),
+                 trendline_options = dict(log_x=True, log_y=True),
                  log_x=True,
                  log_y=True,
                  #animation_frame="MONTH",
