@@ -43,7 +43,7 @@ for region in dataframe["carga_provincia_nombre"].unique(): #for each region
       CFR = deaths/confirmed_cases
       icu_rate = icu / confirmed_cases
       ventilator_rate = ventilators / confirmed_cases
-    dates_dict[date] = icu_rate
+    dates_dict[date] = deaths
     print("region : " + str(region))
     print("period : from " + str(date) + " to " + str(date + pd.DateOffset(months=1)))
     print("Deaths : " + str(deaths))
