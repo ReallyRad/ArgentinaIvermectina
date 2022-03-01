@@ -59,7 +59,7 @@ merged_df = merged_df[(merged_df['MONTH'] > '2020-05-01')]
 ivm_cfr_df = pd.DataFrame({'ivm':np.array(merged_df["IVM"]), 'cfr':np.array(merged_df["DEATHS_PER_1000"])})
 ivm_cfr_df = ivm_cfr_df[ivm_cfr_df["cfr"]!=0]
 
-r, p = scipy.stats.pearsonr(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["DEATHS_PER_1000"]))
+r, p = scipy.stats.pearsonr(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["cfr"]))
 
 fig = px.scatter(merged_df, x="IVM",
                  y="DEATHS_PER_1000",
