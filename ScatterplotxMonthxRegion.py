@@ -13,6 +13,8 @@ total_cases_region_month = pd.read_csv("data/cases_per_month_per_region_per_1000
 population_region = pd.read_csv("data/population_region.csv")
 icu_rate_region = pd.read_csv("data/icu_rate_per_month_per_region.csv")
 deaths = pd.read_csv("data/deaths.csv")
+vax_month_region_1000 = pd.read_csv("data/vaxXMonthXRegionX1000.csv")
+cumulative_vax_month_region_1000 = pd.read_csv("data/cumulativeVaxXMonthXRegionX1000.csv")
 
 merged = dict()
 merged_row = 0
