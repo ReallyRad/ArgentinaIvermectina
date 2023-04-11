@@ -9,7 +9,7 @@ df = pd.read_csv('data/merged_dataset.csv')
 df = df[(df['MONTH'] > '2021-01-01')] #use this to keep data that is before a given date
 
 
-# Calculate the Kendall correlation matrix
+# Calculate the Pearson correlation matrix
 corr = df.corr(method='kendall')
 
 # Generate a heatmap of the correlation matrix using Seaborn
