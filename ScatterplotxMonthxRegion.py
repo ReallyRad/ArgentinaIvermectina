@@ -6,6 +6,7 @@ import plotly_express as px
 # Polynomial Regression
 
 ivm_region_month_1000 = pd.read_csv("data/IVMx1000.csv")
+cumulative_ivm_region_month_1000 = pd.read_csv("data/cumulativeIVMx1000.csv")
 cfr_region_month = pd.read_csv("data/cfr_per_month_per_region.csv")
 cases_region_month_1000 = pd.read_csv("data/cases_per_month_per_region_per_1000_inhabitants.csv")
 cases_region_month = pd.read_csv("data/cases_per_month_per_region.csv")
@@ -27,15 +28,21 @@ for index, ivm_row in ivm_region_month_1000.iterrows():
             deaths_value = deaths.loc[deaths["STATE"] == ivm_row["STATE"]][row_index].values[0]
             cases_per_1000_value = cases_region_month_1000.loc[cases_region_month_1000["STATE"] == ivm_row["STATE"]][row_index].values[0]
             cases_value = cases_region_month.loc[cases_region_month["STATE"] == ivm_row["STATE"]][row_index].values[0]
+            vax_values =  vax_month_region_1000.loc[vax_month_region_1000['STATE'] == ivm_row['STATE']][row_index].values[0]
+            cumulative_vax_values = cumulative_vax_month_region_1000.loc[cumulative_vax_month_region_1000['STATE'] == ivm_row['STATE']][row_index].values[0]
+            cumulative_ivm_values = cumulative_ivm_region_month_1000.loc[cumulative_ivm_region_month_1000['STATE'] == ivm_row['STATE']][row_index].values[0]
             merged[merged_row] = {"STATE": ivm_row["STATE"],
                                   "MONTH": row_index,
                                   "IVM": ivm_row_value,
+                                  "CUMULATIVE_IVM": cumulative_ivm_values,
                                   "CFR": cfr_value,
                                   "DEATHS": deaths_value,
                                   #"ICU": cfr_value,
                                   "CASES_PER_1000": cases_per_1000_value,
                                   "CASES": cases_value,
-                                  "POPULATION": population_region[population_region["STATE"] == ivm_row["STATE"]]["Population"].values[0]
+                                  "POPULATION": population_region[population_region["STATE"] == ivm_row["STATE"]]["Population"].values[0],
+                                  "VAX": vax_values,
+                                  "CUMULATIVE_VAX": cumulative_vax_values
                                   }
             merged_row += 1
 
@@ -54,22 +61,22 @@ merged_df["MONTH"] = pd.to_datetime(merged_df["MONTH"])
 merged_df.to_csv("data/merged_dataset.csv")
 
 #merged_df = merged_df[(merged_df['MONTH'] < '2021-01-01')]
-merged_df = merged_df[(merged_df['MONTH'] > '2020-05-01')]
+merged_df = merged_df[(merged_df['MONTH'] > '2020-02-01')]
 #merged_df = merged_df[(merged_df['CASES'] > 1000)]
-#merged_df = merged_df[merged_df['STATE'].isin(["BUENOS AIRES", "CAPITAL FEDERAL"])]
+merged_df = merged_df[merged_df['STATE'].isin(["BUENOS AIRES", "CAPITAL FEDERAL"])]
 
-ivm_cfr_df = pd.DataFrame({'ivm':np.array(merged_df["IVM"]), 'cfr':np.array(merged_df["DEATHS_PER_1000"])})
+ivm_cfr_df = pd.DataFrame({'ivm':np.array(merged_df["IVM"]), 'cfr':np.array(merged_df["CFR"])})
 ivm_cfr_df = ivm_cfr_df[ivm_cfr_df["cfr"]!=0]
 
 r, p = scipy.stats.pearsonr(np.log(ivm_cfr_df["ivm"]), np.log(ivm_cfr_df["cfr"]))
 
-fig = px.scatter(merged_df, x="IVM",
-                 y="DEATHS_PER_1000",
-                 title="CFR x IVM Purchases, " + 'Pearson R = '+ str(r) + ', p = ' + str(p),
+fig = px.scatter(merged_df, x="CUMULATIVE_IVM",
+                 y="CFR",
+                 #title="CFR x IVM Purchases, " + 'Pearson R = '+ str(r) + ', p = ' + str(p),
                  color="STATE",
                  hover_data=["MONTH", "STATE"],
                  #text="STATE",
-                 size="CASES_PER_1000",
+                 size="CASES",
                  trendline="ols",
                  trendline_scope="overall",
                  trendline_options = dict(log_x=True, log_y=True),
